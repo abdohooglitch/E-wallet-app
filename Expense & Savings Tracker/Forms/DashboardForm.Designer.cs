@@ -118,10 +118,10 @@ namespace ExpenseSavingsTracker.Forms
             lblBudgetInfo.Text = "Set limit:";
             lblBudgetInfo.Location = new Point(14, 40);
             lblBudgetInfo.AutoSize = true;
-            txtMonthlyBudget.Location = new Point(95, 38);
+            txtMonthlyBudget.Location = new Point(125, 38);
             txtMonthlyBudget.Size = new Size(140, 28);
             btnSaveBudget.Text = "Save Budget";
-            btnSaveBudget.Location = new Point(250, 34);
+            btnSaveBudget.Location = new Point(280, 34);
             btnSaveBudget.Size = new Size(110, 34);
             StyleSecondaryButton(btnSaveBudget);
             btnSaveBudget.Click += BtnSaveBudget_Click;

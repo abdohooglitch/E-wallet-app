@@ -81,7 +81,7 @@ namespace ExpenseSavingsTracker.Forms
             lblTarget.Text = "Target (Rs):";
             lblTarget.Location = new Point(16, 92);
             lblTarget.AutoSize = true;
-            txtTargetAmount.Location = new Point(110, 88);
+            txtTargetAmount.Location = new Point(135, 88);
             txtTargetAmount.Size = new Size(130, 28);
             btnCreateGoal.Text = "Create Goal";
             btnCreateGoal.Location = new Point(16, 118);
