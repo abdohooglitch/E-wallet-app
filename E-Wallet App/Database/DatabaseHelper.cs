@@ -2,290 +2,387 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Data.Sqlite;
-using EWalletApp.Models;
+using FinanceTracker.Models;
 
-namespace EWalletApp.Database
+namespace FinanceTracker.Database
 {
     public static class DatabaseHelper
     {
-        private static string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.db");
-        private static string connectionString = $"Data Source={dbPath}";
+        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "finance.db");
+        private static readonly string ConnectionString = $"Data Source={DbPath}";
+
+        public static readonly string[] ExpenseCategories =
+        {
+            "Food & Dining",
+            "Transport",
+            "Bills & Utilities",
+            "Shopping",
+            "Entertainment",
+            "Health",
+            "Education",
+            "Other"
+        };
 
         public static void InitializeDatabase()
         {
-            using (var connection = new SqliteConnection(connectionString))
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+
+            ExecuteNonQuery(connection, @"
+                CREATE TABLE IF NOT EXISTS Users (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL DEFAULT '',
+                    MobileNumber TEXT UNIQUE NOT NULL,
+                    Password TEXT NOT NULL,
+                    MonthlyBudget DECIMAL NOT NULL DEFAULT 0
+                );");
+
+            ExecuteNonQuery(connection, @"
+                CREATE TABLE IF NOT EXISTS Expenses (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    UserId INTEGER NOT NULL,
+                    Category TEXT NOT NULL,
+                    Amount DECIMAL NOT NULL,
+                    ExpenseDate TEXT NOT NULL,
+                    Note TEXT NOT NULL DEFAULT '',
+                    FOREIGN KEY(UserId) REFERENCES Users(Id)
+                );");
+
+            ExecuteNonQuery(connection, @"
+                CREATE TABLE IF NOT EXISTS SavingGoals (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    UserId INTEGER NOT NULL,
+                    Title TEXT NOT NULL,
+                    TargetAmount DECIMAL NOT NULL,
+                    SavedAmount DECIMAL NOT NULL DEFAULT 0,
+                    CreatedAt TEXT NOT NULL,
+                    FOREIGN KEY(UserId) REFERENCES Users(Id)
+                );");
+
+            MigrateLegacyUsersTable(connection);
+        }
+
+        private static void MigrateLegacyUsersTable(SqliteConnection connection)
+        {
+            try
             {
-                connection.Open();
-
-                var createUsersTableCmd = connection.CreateCommand();
-                createUsersTableCmd.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Name TEXT NOT NULL DEFAULT '',
-                        MobileNumber TEXT UNIQUE NOT NULL,
-                        Password TEXT NOT NULL,
-                        Balance DECIMAL NOT NULL DEFAULT 0
-                    );
-                ";
-                createUsersTableCmd.ExecuteNonQuery();
-
-                var createTransactionsTableCmd = connection.CreateCommand();
-                createTransactionsTableCmd.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS Transactions (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        UserId INTEGER NOT NULL,
-                        Type TEXT NOT NULL,
-                        Amount DECIMAL NOT NULL,
-                        Timestamp DATETIME NOT NULL,
-                        Details TEXT NOT NULL,
-                        FOREIGN KEY(UserId) REFERENCES Users(Id)
-                    );
-                ";
-                createTransactionsTableCmd.ExecuteNonQuery();
-
-                // Database migration for existing tables to add Name column
-                try
-                {
-                    var alterTableCmd = connection.CreateCommand();
-                    alterTableCmd.CommandText = "ALTER TABLE Users ADD COLUMN Name TEXT NOT NULL DEFAULT '';";
-                    alterTableCmd.ExecuteNonQuery();
-                }
-                catch (SqliteException)
-                {
-                    // Ignore exception if column already exists
-                }
+                ExecuteNonQuery(connection, "ALTER TABLE Users ADD COLUMN MonthlyBudget DECIMAL NOT NULL DEFAULT 0;");
             }
+            catch (SqliteException) { }
+
+            try
+            {
+                ExecuteNonQuery(connection, "ALTER TABLE Users ADD COLUMN Name TEXT NOT NULL DEFAULT '';");
+            }
+            catch (SqliteException) { }
+        }
+
+        private static void ExecuteNonQuery(SqliteConnection connection, string sql)
+        {
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.ExecuteNonQuery();
         }
 
         public static bool RegisterUser(string name, string mobileNumber, string password)
         {
             try
             {
-                using (var connection = new SqliteConnection(connectionString))
-                {
-                    connection.Open();
-                    var cmd = connection.CreateCommand();
-                    cmd.CommandText = "INSERT INTO Users (Name, MobileNumber, Password, Balance) VALUES (@name, @mobile, @pwd, 0)";
-                    cmd.Parameters.AddWithValue("@name", name);
-                    cmd.Parameters.AddWithValue("@mobile", mobileNumber);
-                    cmd.Parameters.AddWithValue("@pwd", password);
-                    cmd.ExecuteNonQuery();
-                    return true;
-                }
+                using var connection = new SqliteConnection(ConnectionString);
+                connection.Open();
+                using var cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO Users (Name, MobileNumber, Password, MonthlyBudget) VALUES (@name, @mobile, @pwd, 0)";
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@mobile", mobileNumber);
+                cmd.Parameters.AddWithValue("@pwd", password);
+                cmd.ExecuteNonQuery();
+                return true;
             }
             catch (SqliteException)
             {
-                // Most likely unique constraint violation
                 return false;
             }
         }
 
-        public static User Login(string mobileNumber, string password)
+        public static User? Login(string mobileNumber, string password)
         {
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = "SELECT Id, Name, MobileNumber, Password, Balance FROM Users WHERE MobileNumber = @mobile AND Password = @pwd";
-                cmd.Parameters.AddWithValue("@mobile", mobileNumber);
-                cmd.Parameters.AddWithValue("@pwd", password);
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT Id, Name, MobileNumber, Password, MonthlyBudget FROM Users WHERE MobileNumber = @mobile AND Password = @pwd";
+            cmd.Parameters.AddWithValue("@mobile", mobileNumber);
+            cmd.Parameters.AddWithValue("@pwd", password);
 
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        return new User
-                        {
-                            Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            MobileNumber = reader.GetString(2),
-                            Password = reader.GetString(3),
-                            Balance = reader.GetDecimal(4)
-                        };
-                    }
-                }
-            }
-            return null;
+            using var reader = cmd.ExecuteReader();
+            return reader.Read() ? MapUser(reader) : null;
         }
 
-        public static User GetUserByMobile(string mobileNumber)
+        public static User? GetUserByMobile(string mobileNumber)
         {
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = "SELECT Id, Name, MobileNumber, Password, Balance FROM Users WHERE MobileNumber = @mobile";
-                cmd.Parameters.AddWithValue("@mobile", mobileNumber);
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT Id, Name, MobileNumber, Password, MonthlyBudget FROM Users WHERE MobileNumber = @mobile";
+            cmd.Parameters.AddWithValue("@mobile", mobileNumber);
 
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        return new User
-                        {
-                            Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            MobileNumber = reader.GetString(2),
-                            Password = reader.GetString(3),
-                            Balance = reader.GetDecimal(4)
-                        };
-                    }
-                }
-            }
-            return null;
+            using var reader = cmd.ExecuteReader();
+            return reader.Read() ? MapUser(reader) : null;
         }
 
-        public static User GetUserById(int id)
+        public static User? GetUserById(int id)
         {
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = "SELECT Id, Name, MobileNumber, Password, Balance FROM Users WHERE Id = @id";
-                cmd.Parameters.AddWithValue("@id", id);
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT Id, Name, MobileNumber, Password, MonthlyBudget FROM Users WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@id", id);
 
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        return new User
-                        {
-                            Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            MobileNumber = reader.GetString(2),
-                            Password = reader.GetString(3),
-                            Balance = reader.GetDecimal(4)
-                        };
-                    }
-                }
-            }
-            return null;
+            using var reader = cmd.ExecuteReader();
+            return reader.Read() ? MapUser(reader) : null;
         }
 
-        public static void DepositCash(int userId, decimal amount)
+        public static void UpdateMonthlyBudget(int userId, decimal budget)
         {
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
-                {
-                    try
-                    {
-                        var updateCmd = connection.CreateCommand();
-                        updateCmd.CommandText = "UPDATE Users SET Balance = Balance + @amount WHERE Id = @userId";
-                        updateCmd.Parameters.AddWithValue("@amount", amount);
-                        updateCmd.Parameters.AddWithValue("@userId", userId);
-                        updateCmd.ExecuteNonQuery();
-
-                        var insertCmd = connection.CreateCommand();
-                        insertCmd.CommandText = "INSERT INTO Transactions (UserId, Type, Amount, Timestamp, Details) VALUES (@userId, 'Deposit', @amount, @timestamp, 'Self Deposit')";
-                        insertCmd.Parameters.AddWithValue("@userId", userId);
-                        insertCmd.Parameters.AddWithValue("@amount", amount);
-                        insertCmd.Parameters.AddWithValue("@timestamp", DateTime.Now);
-                        insertCmd.ExecuteNonQuery();
-
-                        transaction.Commit();
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
-                }
-            }
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "UPDATE Users SET MonthlyBudget = @budget WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@budget", budget);
+            cmd.Parameters.AddWithValue("@id", userId);
+            cmd.ExecuteNonQuery();
         }
 
-        public static bool SendCash(int senderId, string recipientMobile, decimal amount)
+        public static void AddExpense(int userId, string category, decimal amount, DateTime date, string note)
         {
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                
-                // Get sender to check balance
-                var sender = GetUserById(senderId);
-                if (sender == null || sender.Balance < amount)
-                    return false;
-
-                // Get recipient
-                var recipient = GetUserByMobile(recipientMobile);
-                if (recipient == null || recipient.Id == senderId)
-                    return false; // Can't send to self or non-existent
-
-                using (var transaction = connection.BeginTransaction())
-                {
-                    try
-                    {
-                        // Deduct from sender
-                        var updateSenderCmd = connection.CreateCommand();
-                        updateSenderCmd.CommandText = "UPDATE Users SET Balance = Balance - @amount WHERE Id = @senderId";
-                        updateSenderCmd.Parameters.AddWithValue("@amount", amount);
-                        updateSenderCmd.Parameters.AddWithValue("@senderId", senderId);
-                        updateSenderCmd.ExecuteNonQuery();
-
-                        // Add to recipient
-                        var updateRecipientCmd = connection.CreateCommand();
-                        updateRecipientCmd.CommandText = "UPDATE Users SET Balance = Balance + @amount WHERE Id = @recipientId";
-                        updateRecipientCmd.Parameters.AddWithValue("@amount", amount);
-                        updateRecipientCmd.Parameters.AddWithValue("@recipientId", recipient.Id);
-                        updateRecipientCmd.ExecuteNonQuery();
-
-                        // Sender transaction record
-                        var insertSenderTx = connection.CreateCommand();
-                        insertSenderTx.CommandText = "INSERT INTO Transactions (UserId, Type, Amount, Timestamp, Details) VALUES (@userId, 'Send', @amount, @timestamp, @details)";
-                        insertSenderTx.Parameters.AddWithValue("@userId", senderId);
-                        insertSenderTx.Parameters.AddWithValue("@amount", amount);
-                        insertSenderTx.Parameters.AddWithValue("@timestamp", DateTime.Now);
-                        insertSenderTx.Parameters.AddWithValue("@details", $"To {recipient.MobileNumber}");
-                        insertSenderTx.ExecuteNonQuery();
-
-                        // Recipient transaction record
-                        var insertRecipientTx = connection.CreateCommand();
-                        insertRecipientTx.CommandText = "INSERT INTO Transactions (UserId, Type, Amount, Timestamp, Details) VALUES (@userId, 'Receive', @amount, @timestamp, @details)";
-                        insertRecipientTx.Parameters.AddWithValue("@userId", recipient.Id);
-                        insertRecipientTx.Parameters.AddWithValue("@amount", amount);
-                        insertRecipientTx.Parameters.AddWithValue("@timestamp", DateTime.Now);
-                        insertRecipientTx.Parameters.AddWithValue("@details", $"From {sender.MobileNumber}");
-                        insertRecipientTx.ExecuteNonQuery();
-
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
-                }
-            }
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = @"INSERT INTO Expenses (UserId, Category, Amount, ExpenseDate, Note)
+                                VALUES (@userId, @category, @amount, @date, @note)";
+            cmd.Parameters.AddWithValue("@userId", userId);
+            cmd.Parameters.AddWithValue("@category", category);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@date", date.ToString("yyyy-MM-dd"));
+            cmd.Parameters.AddWithValue("@note", note);
+            cmd.ExecuteNonQuery();
         }
 
-        public static List<Transaction> GetTransactions(int userId)
+        public static List<Expense> GetExpenses(int userId, int? year = null, int? month = null)
         {
-            var list = new List<Transaction>();
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = "SELECT Id, UserId, Type, Amount, Timestamp, Details FROM Transactions WHERE UserId = @userId ORDER BY Timestamp DESC";
-                cmd.Parameters.AddWithValue("@userId", userId);
+            var list = new List<Expense>();
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
 
-                using (var reader = cmd.ExecuteReader())
+            var sql = "SELECT Id, UserId, Category, Amount, ExpenseDate, Note FROM Expenses WHERE UserId = @userId";
+            if (year.HasValue && month.HasValue)
+            {
+                sql += " AND strftime('%Y', ExpenseDate) = @year AND strftime('%m', ExpenseDate) = @month";
+                cmd.Parameters.AddWithValue("@year", year.Value.ToString());
+                cmd.Parameters.AddWithValue("@month", month.Value.ToString("D2"));
+            }
+            sql += " ORDER BY ExpenseDate DESC, Id DESC";
+            cmd.CommandText = sql;
+            cmd.Parameters.AddWithValue("@userId", userId);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new Expense
                 {
-                    while (reader.Read())
-                    {
-                        list.Add(new Transaction
-                        {
-                            Id = reader.GetInt32(0),
-                            UserId = reader.GetInt32(1),
-                            Type = reader.GetString(2),
-                            Amount = reader.GetDecimal(3),
-                            Timestamp = reader.GetDateTime(4),
-                            Details = reader.GetString(5)
-                        });
-                    }
-                }
+                    Id = reader.GetInt32(0),
+                    UserId = reader.GetInt32(1),
+                    Category = reader.GetString(2),
+                    Amount = reader.GetDecimal(3),
+                    ExpenseDate = DateTime.Parse(reader.GetString(4)),
+                    Note = reader.GetString(5)
+                });
             }
             return list;
+        }
+
+        public static decimal GetMonthlyExpenses(int userId, int year, int month)
+        {
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT COALESCE(SUM(Amount), 0) FROM Expenses
+                                WHERE UserId = @userId
+                                AND strftime('%Y', ExpenseDate) = @year
+                                AND strftime('%m', ExpenseDate) = @month";
+            cmd.Parameters.AddWithValue("@userId", userId);
+            cmd.Parameters.AddWithValue("@year", year.ToString());
+            cmd.Parameters.AddWithValue("@month", month.ToString("D2"));
+            return Convert.ToDecimal(cmd.ExecuteScalar());
+        }
+
+        public static List<CategoryReport> GetExpensesByCategory(int userId, int year, int month)
+        {
+            var list = new List<CategoryReport>();
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT Category, SUM(Amount) as Total FROM Expenses
+                                WHERE UserId = @userId
+                                AND strftime('%Y', ExpenseDate) = @year
+                                AND strftime('%m', ExpenseDate) = @month
+                                GROUP BY Category ORDER BY Total DESC";
+            cmd.Parameters.AddWithValue("@userId", userId);
+            cmd.Parameters.AddWithValue("@year", year.ToString());
+            cmd.Parameters.AddWithValue("@month", month.ToString("D2"));
+
+            decimal grandTotal = 0;
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                var total = reader.GetDecimal(1);
+                grandTotal += total;
+                list.Add(new CategoryReport { Category = reader.GetString(0), Total = total });
+            }
+
+            foreach (var item in list)
+            {
+                item.Percentage = grandTotal <= 0 ? 0 : Math.Round((item.Total / grandTotal) * 100, 1);
+            }
+            return list;
+        }
+
+        public static bool CreateSavingGoal(int userId, string title, decimal targetAmount)
+        {
+            if (string.IsNullOrWhiteSpace(title) || targetAmount <= 0) return false;
+
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = @"INSERT INTO SavingGoals (UserId, Title, TargetAmount, SavedAmount, CreatedAt)
+                                VALUES (@userId, @title, @target, 0, @created)";
+            cmd.Parameters.AddWithValue("@userId", userId);
+            cmd.Parameters.AddWithValue("@title", title.Trim());
+            cmd.Parameters.AddWithValue("@target", targetAmount);
+            cmd.Parameters.AddWithValue("@created", DateTime.Now.ToString("o"));
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+
+        public static List<SavingGoal> GetSavingGoals(int userId)
+        {
+            var list = new List<SavingGoal>();
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT Id, UserId, Title, TargetAmount, SavedAmount, CreatedAt
+                                FROM SavingGoals WHERE UserId = @userId ORDER BY CreatedAt DESC";
+            cmd.Parameters.AddWithValue("@userId", userId);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new SavingGoal
+                {
+                    Id = reader.GetInt32(0),
+                    UserId = reader.GetInt32(1),
+                    Title = reader.GetString(2),
+                    TargetAmount = reader.GetDecimal(3),
+                    SavedAmount = reader.GetDecimal(4),
+                    CreatedAt = DateTime.Parse(reader.GetString(5))
+                });
+            }
+            return list;
+        }
+
+        public static SavingGoal? GetSavingGoalById(int goalId)
+        {
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT Id, UserId, Title, TargetAmount, SavedAmount, CreatedAt
+                                FROM SavingGoals WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@id", goalId);
+
+            using var reader = cmd.ExecuteReader();
+            if (!reader.Read()) return null;
+
+            return new SavingGoal
+            {
+                Id = reader.GetInt32(0),
+                UserId = reader.GetInt32(1),
+                Title = reader.GetString(2),
+                TargetAmount = reader.GetDecimal(3),
+                SavedAmount = reader.GetDecimal(4),
+                CreatedAt = DateTime.Parse(reader.GetString(5))
+            };
+        }
+
+        public static bool DepositToGoal(int goalId, decimal amount)
+        {
+            if (amount <= 0) return false;
+            var goal = GetSavingGoalById(goalId);
+            if (goal == null) return false;
+
+            decimal newSaved = goal.SavedAmount + amount;
+            if (newSaved > goal.TargetAmount)
+                newSaved = goal.TargetAmount;
+
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "UPDATE SavingGoals SET SavedAmount = @saved WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@saved", newSaved);
+            cmd.Parameters.AddWithValue("@id", goalId);
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+
+        public static bool WithdrawFromGoal(int goalId, decimal amount)
+        {
+            if (amount <= 0) return false;
+            var goal = GetSavingGoalById(goalId);
+            if (goal == null || goal.SavedAmount < amount) return false;
+
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "UPDATE SavingGoals SET SavedAmount = SavedAmount - @amount WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@id", goalId);
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+
+        public static decimal GetTotalSavings(int userId)
+        {
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT COALESCE(SUM(SavedAmount), 0) FROM SavingGoals WHERE UserId = @userId";
+            cmd.Parameters.AddWithValue("@userId", userId);
+            return Convert.ToDecimal(cmd.ExecuteScalar());
+        }
+
+        public static DashboardSummary GetDashboardSummary(int userId)
+        {
+            var user = GetUserById(userId);
+            var now = DateTime.Now;
+
+            return new DashboardSummary
+            {
+                UserName = user?.Name ?? "User",
+                MonthlyBudget = user?.MonthlyBudget ?? 0,
+                MonthlyExpenses = GetMonthlyExpenses(userId, now.Year, now.Month),
+                TotalSavings = GetTotalSavings(userId)
+            };
+        }
+
+        private static User MapUser(SqliteDataReader reader)
+        {
+            return new User
+            {
+                Id = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                MobileNumber = reader.GetString(2),
+                Password = reader.GetString(3),
+                MonthlyBudget = reader.GetDecimal(4)
+            };
         }
     }
 }

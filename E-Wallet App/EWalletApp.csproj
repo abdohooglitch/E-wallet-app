@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWindowsForms>true</UseWindowsForms>
-    <RootNamespace>EWalletApp</RootNamespace>
-    <AssemblyName>EWalletApp</AssemblyName>
-    <Product>E-Wallet App</Product>
-    <AssemblyTitle>E-Wallet App</AssemblyTitle>
-    <Company>E-Wallet App</Company>
+    <RootNamespace>FinanceTracker</RootNamespace>
+    <AssemblyName>FinanceTracker</AssemblyName>
+    <Product>Expense &amp; Savings Tracker</Product>
+    <AssemblyTitle>Expense &amp; Savings Tracker</AssemblyTitle>
+    <Company>Finance Tracker</Company>
   </PropertyGroup>
 
   <ItemGroup>

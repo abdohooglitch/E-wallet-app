@@ -22,6 +22,8 @@ Desktop.ini
 # Local database (created at runtime)
 **/app.db
 **/app.db-journal
+**/finance.db
+**/finance.db-journal
 
 # Logs and temp
 *.log
