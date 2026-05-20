@@ -32,7 +32,7 @@ namespace ExpenseSavingsTracker.Forms
             ((System.ComponentModel.ISupportInitialize)dgvReport).BeginInit();
             SuspendLayout();
 
-            ClientSize = new Size(560, 480);
+            ClientSize = new Size(600, 520);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -51,21 +51,21 @@ namespace ExpenseSavingsTracker.Forms
             lblMonth.AutoSize = true;
 
             cmbMonth.Location = new Point(75, 52);
-            cmbMonth.Size = new Size(120, 25);
+            cmbMonth.Size = new Size(140, 28);
             cmbMonth.DropDownStyle = ComboBoxStyle.DropDownList;
 
             cmbYear.Location = new Point(205, 52);
-            cmbYear.Size = new Size(80, 25);
+            cmbYear.Size = new Size(90, 28);
             cmbYear.DropDownStyle = ComboBoxStyle.DropDownList;
 
             btnLoad.Text = "Load Report";
-            btnLoad.Location = new Point(300, 50);
-            btnLoad.Size = new Size(110, 30);
+            btnLoad.Location = new Point(310, 48);
+            btnLoad.Size = new Size(130, 34);
             StyleAccentButton(btnLoad);
             btnLoad.Click += BtnLoad_Click;
 
             dgvReport.Location = new Point(24, 95);
-            dgvReport.Size = new Size(510, 280);
+            dgvReport.Size = new Size(548, 300);
             dgvReport.ReadOnly = true;
             dgvReport.AllowUserToAddRows = false;
             dgvReport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -83,8 +83,8 @@ namespace ExpenseSavingsTracker.Forms
             lblGrandTotal.ForeColor = Color.FromArgb(124, 58, 237);
 
             btnBack.Text = "Back to Dashboard";
-            btnBack.Location = new Point(180, 415);
-            btnBack.Size = new Size(200, 40);
+            btnBack.Location = new Point(190, 450);
+            btnBack.Size = new Size(220, 44);
             StyleSecondaryButton(btnBack);
             btnBack.Click += BtnBack_Click;
 

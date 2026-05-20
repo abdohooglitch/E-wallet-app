@@ -24,7 +24,7 @@ namespace ExpenseSavingsTracker.Forms
             ((System.ComponentModel.ISupportInitialize)dgvExpenses).BeginInit();
             SuspendLayout();
 
-            ClientSize = new Size(640, 480);
+            ClientSize = new Size(680, 520);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -39,7 +39,7 @@ namespace ExpenseSavingsTracker.Forms
             lblTitle.ForeColor = Color.FromArgb(15, 23, 42);
 
             dgvExpenses.Location = new Point(24, 55);
-            dgvExpenses.Size = new Size(590, 320);
+            dgvExpenses.Size = new Size(630, 340);
             dgvExpenses.ReadOnly = true;
             dgvExpenses.AllowUserToAddRows = false;
             dgvExpenses.AllowUserToDeleteRows = false;
@@ -62,8 +62,8 @@ namespace ExpenseSavingsTracker.Forms
             lblTotal.ForeColor = Color.FromArgb(220, 38, 38);
 
             btnBack.Text = "Back to Dashboard";
-            btnBack.Location = new Point(220, 415);
-            btnBack.Size = new Size(200, 40);
+            btnBack.Location = new Point(240, 450);
+            btnBack.Size = new Size(220, 44);
             StyleSecondaryButton(btnBack);
             btnBack.Click += BtnBack_Click;
 

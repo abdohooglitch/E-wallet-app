@@ -58,7 +58,7 @@ namespace ExpenseSavingsTracker.Forms
             pnlBudget.SuspendLayout();
             SuspendLayout();
 
-            ClientSize = new Size(480, 560);
+            ClientSize = new Size(520, 600);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -74,8 +74,8 @@ namespace ExpenseSavingsTracker.Forms
 
             // Expense card
             pnlExpenseCard.BackColor = Color.FromArgb(254, 242, 242);
-            pnlExpenseCard.Location = new Point(24, 60);
-            pnlExpenseCard.Size = new Size(200, 90);
+            pnlExpenseCard.Location = new Point(28, 65);
+            pnlExpenseCard.Size = new Size(220, 95);
             lblExpenseTitle.Text = "This Month Expenses";
             lblExpenseTitle.Location = new Point(12, 12);
             lblExpenseTitle.AutoSize = true;
@@ -91,8 +91,8 @@ namespace ExpenseSavingsTracker.Forms
 
             // Savings card
             pnlSavingsCard.BackColor = Color.FromArgb(236, 253, 245);
-            pnlSavingsCard.Location = new Point(240, 60);
-            pnlSavingsCard.Size = new Size(216, 90);
+            pnlSavingsCard.Location = new Point(264, 65);
+            pnlSavingsCard.Size = new Size(228, 95);
             lblSavingsTitle.Text = "Total Savings";
             lblSavingsTitle.Location = new Point(12, 12);
             lblSavingsTitle.AutoSize = true;
@@ -108,8 +108,8 @@ namespace ExpenseSavingsTracker.Forms
 
             // Budget panel
             pnlBudget.BackColor = Color.White;
-            pnlBudget.Location = new Point(24, 165);
-            pnlBudget.Size = new Size(432, 130);
+            pnlBudget.Location = new Point(28, 175);
+            pnlBudget.Size = new Size(464, 140);
             lblBudgetTitle.Text = "Monthly Budget";
             lblBudgetTitle.Location = new Point(14, 12);
             lblBudgetTitle.AutoSize = true;
@@ -118,18 +118,19 @@ namespace ExpenseSavingsTracker.Forms
             lblBudgetInfo.Text = "Set limit:";
             lblBudgetInfo.Location = new Point(14, 40);
             lblBudgetInfo.AutoSize = true;
-            txtMonthlyBudget.Location = new Point(90, 36);
-            txtMonthlyBudget.Size = new Size(120, 25);
-            btnSaveBudget.Text = "Save";
-            btnSaveBudget.Location = new Point(220, 34);
-            btnSaveBudget.Size = new Size(70, 30);
+            txtMonthlyBudget.Location = new Point(95, 38);
+            txtMonthlyBudget.Size = new Size(140, 28);
+            btnSaveBudget.Text = "Save Budget";
+            btnSaveBudget.Location = new Point(250, 34);
+            btnSaveBudget.Size = new Size(110, 34);
             StyleSecondaryButton(btnSaveBudget);
             btnSaveBudget.Click += BtnSaveBudget_Click;
-            progressBudget.Location = new Point(14, 72);
-            progressBudget.Size = new Size(400, 22);
+            progressBudget.Location = new Point(14, 78);
+            progressBudget.Size = new Size(430, 24);
             progressBudget.Style = ProgressBarStyle.Continuous;
             lblBudgetStatus.Text = "No budget set";
-            lblBudgetStatus.Location = new Point(14, 100);
+            lblBudgetStatus.Location = new Point(14, 108);
+            lblBudgetStatus.MaximumSize = new Size(430, 0);
             lblBudgetStatus.AutoSize = true;
             lblBudgetStatus.ForeColor = Color.FromArgb(71, 85, 105);
             pnlBudget.Controls.AddRange(new Control[]
@@ -138,38 +139,38 @@ namespace ExpenseSavingsTracker.Forms
             });
 
             btnAddExpense.Text = "+ Add Expense";
-            btnAddExpense.Location = new Point(24, 315);
-            btnAddExpense.Size = new Size(200, 42);
+            btnAddExpense.Location = new Point(28, 335);
+            btnAddExpense.Size = new Size(225, 44);
             StyleExpenseButton(btnAddExpense);
             btnAddExpense.Click += BtnAddExpense_Click;
 
             btnExpenseHistory.Text = "Expense History";
-            btnExpenseHistory.Location = new Point(240, 315);
-            btnExpenseHistory.Size = new Size(216, 42);
+            btnExpenseHistory.Location = new Point(267, 335);
+            btnExpenseHistory.Size = new Size(225, 44);
             StylePrimaryButton(btnExpenseHistory);
             btnExpenseHistory.Click += BtnExpenseHistory_Click;
 
             btnSavings.Text = "Savings Goals";
-            btnSavings.Location = new Point(24, 368);
-            btnSavings.Size = new Size(200, 42);
+            btnSavings.Location = new Point(28, 392);
+            btnSavings.Size = new Size(225, 44);
             StyleSuccessButton(btnSavings);
             btnSavings.Click += BtnSavings_Click;
 
             btnReports.Text = "Monthly Report";
-            btnReports.Location = new Point(240, 368);
-            btnReports.Size = new Size(216, 42);
+            btnReports.Location = new Point(267, 392);
+            btnReports.Size = new Size(225, 44);
             StyleAccentButton(btnReports);
             btnReports.Click += BtnReports_Click;
 
             btnRefresh.Text = "Refresh";
-            btnRefresh.Location = new Point(24, 425);
-            btnRefresh.Size = new Size(200, 36);
+            btnRefresh.Location = new Point(28, 450);
+            btnRefresh.Size = new Size(225, 40);
             StyleSecondaryButton(btnRefresh);
             btnRefresh.Click += BtnRefresh_Click;
 
             btnLogout.Text = "Logout";
-            btnLogout.Location = new Point(240, 425);
-            btnLogout.Size = new Size(216, 36);
+            btnLogout.Location = new Point(267, 450);
+            btnLogout.Size = new Size(225, 40);
             StyleDangerButton(btnLogout);
             btnLogout.Click += BtnLogout_Click;
 

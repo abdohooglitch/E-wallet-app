@@ -43,7 +43,7 @@ namespace ExpenseSavingsTracker.Forms
             grpActions.SuspendLayout();
             SuspendLayout();
 
-            ClientSize = new Size(620, 520);
+            ClientSize = new Size(720, 580);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -52,13 +52,13 @@ namespace ExpenseSavingsTracker.Forms
             Font = new Font("Segoe UI", 9.75F);
 
             lblTitle.Text = "My Savings Goals";
-            lblTitle.Location = new Point(24, 18);
+            lblTitle.Location = new Point(28, 20);
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(5, 150, 105);
 
-            dgvGoals.Location = new Point(24, 50);
-            dgvGoals.Size = new Size(570, 200);
+            dgvGoals.Location = new Point(28, 55);
+            dgvGoals.Size = new Size(664, 210);
             dgvGoals.ReadOnly = true;
             dgvGoals.AllowUserToAddRows = false;
             dgvGoals.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -71,48 +71,48 @@ namespace ExpenseSavingsTracker.Forms
             dgvGoals.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
 
             grpNewGoal.Text = "Create New Goal";
-            grpNewGoal.Location = new Point(24, 262);
-            grpNewGoal.Size = new Size(270, 120);
+            grpNewGoal.Location = new Point(28, 280);
+            grpNewGoal.Size = new Size(330, 155);
             lblGoalName.Text = "Goal name:";
-            lblGoalName.Location = new Point(14, 28);
+            lblGoalName.Location = new Point(16, 30);
             lblGoalName.AutoSize = true;
-            txtGoalTitle.Location = new Point(14, 50);
-            txtGoalTitle.Size = new Size(240, 25);
+            txtGoalTitle.Location = new Point(16, 52);
+            txtGoalTitle.Size = new Size(295, 28);
             lblTarget.Text = "Target (Rs):";
-            lblTarget.Location = new Point(14, 78);
+            lblTarget.Location = new Point(16, 92);
             lblTarget.AutoSize = true;
-            txtTargetAmount.Location = new Point(90, 75);
-            txtTargetAmount.Size = new Size(100, 25);
-            btnCreateGoal.Text = "Create";
-            btnCreateGoal.Location = new Point(200, 73);
-            btnCreateGoal.Size = new Size(54, 28);
+            txtTargetAmount.Location = new Point(110, 88);
+            txtTargetAmount.Size = new Size(130, 28);
+            btnCreateGoal.Text = "Create Goal";
+            btnCreateGoal.Location = new Point(16, 118);
+            btnCreateGoal.Size = new Size(295, 32);
             StyleSuccessButton(btnCreateGoal);
             btnCreateGoal.Click += BtnCreateGoal_Click;
             grpNewGoal.Controls.AddRange(new Control[] { lblGoalName, txtGoalTitle, lblTarget, txtTargetAmount, btnCreateGoal });
 
             grpActions.Text = "Selected Goal";
-            grpActions.Location = new Point(310, 262);
-            grpActions.Size = new Size(284, 120);
+            grpActions.Location = new Point(374, 280);
+            grpActions.Size = new Size(318, 155);
             lblAmountLabel.Text = "Amount (Rs):";
-            lblAmountLabel.Location = new Point(14, 32);
+            lblAmountLabel.Location = new Point(16, 30);
             lblAmountLabel.AutoSize = true;
-            txtAmount.Location = new Point(14, 54);
-            txtAmount.Size = new Size(120, 25);
+            txtAmount.Location = new Point(16, 52);
+            txtAmount.Size = new Size(283, 28);
             btnDeposit.Text = "Deposit";
-            btnDeposit.Location = new Point(145, 50);
-            btnDeposit.Size = new Size(60, 30);
+            btnDeposit.Location = new Point(16, 92);
+            btnDeposit.Size = new Size(135, 36);
             StyleSuccessButton(btnDeposit);
             btnDeposit.Click += BtnDeposit_Click;
             btnWithdraw.Text = "Withdraw";
-            btnWithdraw.Location = new Point(210, 50);
-            btnWithdraw.Size = new Size(65, 30);
+            btnWithdraw.Location = new Point(164, 92);
+            btnWithdraw.Size = new Size(135, 36);
             StyleSecondaryButton(btnWithdraw);
             btnWithdraw.Click += BtnWithdraw_Click;
             grpActions.Controls.AddRange(new Control[] { lblAmountLabel, txtAmount, btnDeposit, btnWithdraw });
 
             btnBack.Text = "Back to Dashboard";
-            btnBack.Location = new Point(210, 400);
-            btnBack.Size = new Size(200, 40);
+            btnBack.Location = new Point(250, 455);
+            btnBack.Size = new Size(220, 44);
             StyleSecondaryButton(btnBack);
             btnBack.Click += BtnBack_Click;
 

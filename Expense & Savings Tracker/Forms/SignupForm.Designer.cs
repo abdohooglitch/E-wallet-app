@@ -33,7 +33,7 @@ namespace ExpenseSavingsTracker.Forms
             btnCancel = new Button();
             SuspendLayout();
 
-            ClientSize = new Size(440, 470);
+            ClientSize = new Size(480, 500);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -53,7 +53,7 @@ namespace ExpenseSavingsTracker.Forms
             lblName.ForeColor = Color.FromArgb(51, 65, 85);
 
             txtName.Location = new Point(55, 110);
-            txtName.Size = new Size(320, 25);
+            txtName.Size = new Size(360, 28);
 
             lblMobile.Text = "Mobile Number:";
             lblMobile.Location = new Point(55, 150);
@@ -61,7 +61,7 @@ namespace ExpenseSavingsTracker.Forms
             lblMobile.ForeColor = Color.FromArgb(51, 65, 85);
 
             txtMobileNumber.Location = new Point(55, 172);
-            txtMobileNumber.Size = new Size(320, 25);
+            txtMobileNumber.Size = new Size(360, 28);
 
             lblPassword.Text = "Password:";
             lblPassword.Location = new Point(55, 212);
@@ -69,18 +69,18 @@ namespace ExpenseSavingsTracker.Forms
             lblPassword.ForeColor = Color.FromArgb(51, 65, 85);
 
             txtPassword.Location = new Point(55, 234);
-            txtPassword.Size = new Size(320, 25);
+            txtPassword.Size = new Size(360, 28);
             txtPassword.UseSystemPasswordChar = true;
 
             btnSignUp.Text = "Sign Up";
-            btnSignUp.Location = new Point(55, 300);
-            btnSignUp.Size = new Size(155, 44);
+            btnSignUp.Location = new Point(55, 310);
+            btnSignUp.Size = new Size(175, 44);
             StyleSuccessButton(btnSignUp);
             btnSignUp.Click += BtnSignUp_Click;
 
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(220, 300);
-            btnCancel.Size = new Size(155, 44);
+            btnCancel.Location = new Point(240, 310);
+            btnCancel.Size = new Size(175, 44);
             StyleDangerButton(btnCancel);
             btnCancel.Click += BtnCancel_Click;
 

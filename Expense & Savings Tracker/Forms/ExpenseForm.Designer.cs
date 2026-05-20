@@ -37,7 +37,7 @@ namespace ExpenseSavingsTracker.Forms
             btnBack = new Button();
             SuspendLayout();
 
-            ClientSize = new Size(440, 420);
+            ClientSize = new Size(480, 460);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -55,37 +55,37 @@ namespace ExpenseSavingsTracker.Forms
             lblCategory.Location = new Point(55, 75);
             lblCategory.AutoSize = true;
             cmbCategory.Location = new Point(55, 98);
-            cmbCategory.Size = new Size(320, 25);
+            cmbCategory.Size = new Size(360, 28);
             cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
 
             lblAmount.Text = "Amount (Rs):";
             lblAmount.Location = new Point(55, 135);
             lblAmount.AutoSize = true;
             txtAmount.Location = new Point(55, 158);
-            txtAmount.Size = new Size(320, 25);
+            txtAmount.Size = new Size(360, 28);
 
             lblDate.Text = "Date:";
             lblDate.Location = new Point(55, 195);
             lblDate.AutoSize = true;
             dtpDate.Location = new Point(55, 218);
-            dtpDate.Size = new Size(320, 25);
+            dtpDate.Size = new Size(360, 28);
             dtpDate.Format = DateTimePickerFormat.Short;
 
             lblNote.Text = "Note (optional):";
             lblNote.Location = new Point(55, 255);
             lblNote.AutoSize = true;
             txtNote.Location = new Point(55, 278);
-            txtNote.Size = new Size(320, 25);
+            txtNote.Size = new Size(360, 28);
 
             btnSave.Text = "Save Expense";
-            btnSave.Location = new Point(55, 330);
-            btnSave.Size = new Size(155, 44);
+            btnSave.Location = new Point(55, 355);
+            btnSave.Size = new Size(175, 44);
             StyleExpenseButton(btnSave);
             btnSave.Click += BtnSave_Click;
 
-            btnBack.Text = "Back";
-            btnBack.Location = new Point(220, 330);
-            btnBack.Size = new Size(155, 44);
+            btnBack.Text = "Back to Dashboard";
+            btnBack.Location = new Point(240, 355);
+            btnBack.Size = new Size(175, 44);
             StyleSecondaryButton(btnBack);
             btnBack.Click += BtnBack_Click;
 

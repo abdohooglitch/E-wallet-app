@@ -32,7 +32,7 @@ namespace ExpenseSavingsTracker.Forms
             // Form
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(440, 400);
+            ClientSize = new Size(480, 420);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -54,7 +54,7 @@ namespace ExpenseSavingsTracker.Forms
             lblMobile.ForeColor = Color.FromArgb(51, 65, 85);
 
             txtMobileNumber.Location = new Point(55, 128);
-            txtMobileNumber.Size = new Size(320, 25);
+            txtMobileNumber.Size = new Size(360, 28);
             txtMobileNumber.BorderStyle = BorderStyle.FixedSingle;
 
             // lblPassword
@@ -64,21 +64,21 @@ namespace ExpenseSavingsTracker.Forms
             lblPassword.ForeColor = Color.FromArgb(51, 65, 85);
 
             txtPassword.Location = new Point(55, 193);
-            txtPassword.Size = new Size(320, 25);
+            txtPassword.Size = new Size(360, 28);
             txtPassword.UseSystemPasswordChar = true;
             txtPassword.BorderStyle = BorderStyle.FixedSingle;
 
             // btnLogin
             btnLogin.Text = "Login";
-            btnLogin.Location = new Point(55, 255);
-            btnLogin.Size = new Size(155, 44);
+            btnLogin.Location = new Point(55, 265);
+            btnLogin.Size = new Size(175, 44);
             StylePrimaryButton(btnLogin);
             btnLogin.Click += BtnLogin_Click;
 
             // btnSignUp
             btnSignUp.Text = "Sign Up";
-            btnSignUp.Location = new Point(220, 255);
-            btnSignUp.Size = new Size(155, 44);
+            btnSignUp.Location = new Point(240, 265);
+            btnSignUp.Size = new Size(175, 44);
             StyleSuccessButton(btnSignUp);
             btnSignUp.Click += BtnSignUp_Click;
 
