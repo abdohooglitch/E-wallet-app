@@ -1,7 +1,7 @@
-using FinanceTracker.Database;
-using FinanceTracker.Models;
+using ExpenseSavingsTracker.Database;
+using ExpenseSavingsTracker.Models;
 
-namespace FinanceTracker.Forms
+namespace ExpenseSavingsTracker.Forms
 {
     public partial class DashboardForm : Form
     {

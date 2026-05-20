@@ -1,4 +1,4 @@
-namespace FinanceTracker.Forms
+namespace ExpenseSavingsTracker.Forms
 {
     partial class ExpenseHistoryForm
     {

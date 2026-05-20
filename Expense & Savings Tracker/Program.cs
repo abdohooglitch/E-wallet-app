@@ -1,7 +1,7 @@
-using FinanceTracker.Database;
-using FinanceTracker.Forms;
+using ExpenseSavingsTracker.Database;
+using ExpenseSavingsTracker.Forms;
 
-namespace FinanceTracker
+namespace ExpenseSavingsTracker
 {
     static class Program
     {

@@ -28,19 +28,19 @@ A desktop **personal finance** application built with **C# Windows Forms** and *
 ## Project Structure
 
 ```
-E-Wallet App/
-├── Program.cs              # Application entry point
-├── EWalletApp.csproj       # Project file (outputs FinanceTracker)
-├── Forms/                  # UI screens — logic (.cs) + designer (.Designer.cs)
-│   ├── AuthForm            # Login
-│   ├── SignupForm          # Registration
-│   ├── DashboardForm       # Summary, budget, navigation
-│   ├── ExpenseForm         # Add expense
-│   ├── ExpenseHistoryForm  # Expense list
-│   ├── SavingsForm         # Savings goals
-│   └── ReportsForm         # Category report
-├── Models/                 # User, Expense, SavingGoal, etc.
-└── Database/               # SQLite setup and data access
+Expense & Savings Tracker/
+├── Program.cs                    # Application entry point
+├── ExpenseSavingsTracker.csproj  # Project file
+├── Forms/                        # UI screens — logic (.cs) + designer (.Designer.cs)
+│   ├── AuthForm                  # Login
+│   ├── SignupForm                # Registration
+│   ├── DashboardForm             # Summary, budget, navigation
+│   ├── ExpenseForm               # Add expense
+│   ├── ExpenseHistoryForm        # Expense list
+│   ├── SavingsForm               # Savings goals
+│   └── ReportsForm               # Category report
+├── Models/                       # User, Expense, SavingGoal, etc.
+└── Database/                     # SQLite setup and data access
 ```
 
 ## Prerequisites
@@ -60,12 +60,12 @@ cd E-wallet-app
 ### 2. Run the application
 
 ```bash
-cd "E-Wallet App"
+cd "Expense & Savings Tracker"
 dotnet restore
 dotnet run
 ```
 
-Or open `E-Wallet App/EWalletApp.csproj` in **Visual Studio** and press **F5**.
+Or open `Expense & Savings Tracker/ExpenseSavingsTracker.csproj` in **Visual Studio** and press **F5**.
 
 ### 3. First-time use
 
@@ -106,7 +106,7 @@ All database operations are handled in `Database/DatabaseHelper.cs`.
 ## Development Notes
 
 - Each form uses a **partial class**: `.cs` for logic, `.Designer.cs` for UI layout and styling.
-- Project namespace: `FinanceTracker` | Assembly output: `FinanceTracker.exe`
+- Project namespace: `ExpenseSavingsTracker` | Assembly output: `ExpenseSavingsTracker.exe`
 - Build artifacts (`bin/`, `obj/`) and local `finance.db` are excluded via `.gitignore`.
 
 ## Author

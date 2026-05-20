@@ -1,4 +1,4 @@
-namespace FinanceTracker.Models
+namespace ExpenseSavingsTracker.Models
 {
     public class CategoryReport
     {

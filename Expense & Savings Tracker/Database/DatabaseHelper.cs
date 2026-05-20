@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Data.Sqlite;
-using FinanceTracker.Models;
+using ExpenseSavingsTracker.Models;
 
-namespace FinanceTracker.Database
+namespace ExpenseSavingsTracker.Database
 {
     public static class DatabaseHelper
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace FinanceTracker.Models
+namespace ExpenseSavingsTracker.Models
 {
     public class SavingGoal
     {

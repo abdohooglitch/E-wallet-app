@@ -1,6 +1,6 @@
-using FinanceTracker.Database;
+using ExpenseSavingsTracker.Database;
 
-namespace FinanceTracker.Forms
+namespace ExpenseSavingsTracker.Forms
 {
     public partial class SignupForm : Form
     {

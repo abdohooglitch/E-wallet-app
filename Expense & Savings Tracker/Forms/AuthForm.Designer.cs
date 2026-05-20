@@ -1,17 +1,15 @@
-namespace FinanceTracker.Forms
+namespace ExpenseSavingsTracker.Forms
 {
-    partial class SignupForm
+    partial class AuthForm
     {
         private System.ComponentModel.IContainer components = null;
         private Label lblTitle;
-        private Label lblName;
         private Label lblMobile;
         private Label lblPassword;
-        private TextBox txtName;
         private TextBox txtMobileNumber;
         private TextBox txtPassword;
+        private Button btnLogin;
         private Button btnSignUp;
-        private Button btnCancel;
 
         protected override void Dispose(bool disposing)
         {
@@ -23,74 +21,83 @@ namespace FinanceTracker.Forms
         private void InitializeComponent()
         {
             lblTitle = new Label();
-            lblName = new Label();
             lblMobile = new Label();
             lblPassword = new Label();
-            txtName = new TextBox();
             txtMobileNumber = new TextBox();
             txtPassword = new TextBox();
+            btnLogin = new Button();
             btnSignUp = new Button();
-            btnCancel = new Button();
             SuspendLayout();
 
-            ClientSize = new Size(440, 470);
+            // Form
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(440, 400);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Create Account";
+            Text = "Expense & Savings Tracker - Login";
             BackColor = Color.FromArgb(241, 245, 249);
             Font = new Font("Segoe UI", 9.75F);
 
-            lblTitle.Text = "Create Your Account";
-            lblTitle.Location = new Point(95, 30);
+            // lblTitle
+            lblTitle.Text = "Expense & Savings Tracker";
+            lblTitle.Location = new Point(50, 35);
             lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lblTitle.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(15, 23, 42);
 
-            lblName.Text = "Full Name:";
-            lblName.Location = new Point(55, 88);
-            lblName.AutoSize = true;
-            lblName.ForeColor = Color.FromArgb(51, 65, 85);
-
-            txtName.Location = new Point(55, 110);
-            txtName.Size = new Size(320, 25);
-
+            // lblMobile
             lblMobile.Text = "Mobile Number:";
-            lblMobile.Location = new Point(55, 150);
+            lblMobile.Location = new Point(55, 105);
             lblMobile.AutoSize = true;
             lblMobile.ForeColor = Color.FromArgb(51, 65, 85);
 
-            txtMobileNumber.Location = new Point(55, 172);
+            txtMobileNumber.Location = new Point(55, 128);
             txtMobileNumber.Size = new Size(320, 25);
+            txtMobileNumber.BorderStyle = BorderStyle.FixedSingle;
 
+            // lblPassword
             lblPassword.Text = "Password:";
-            lblPassword.Location = new Point(55, 212);
+            lblPassword.Location = new Point(55, 170);
             lblPassword.AutoSize = true;
             lblPassword.ForeColor = Color.FromArgb(51, 65, 85);
 
-            txtPassword.Location = new Point(55, 234);
+            txtPassword.Location = new Point(55, 193);
             txtPassword.Size = new Size(320, 25);
             txtPassword.UseSystemPasswordChar = true;
+            txtPassword.BorderStyle = BorderStyle.FixedSingle;
 
+            // btnLogin
+            btnLogin.Text = "Login";
+            btnLogin.Location = new Point(55, 255);
+            btnLogin.Size = new Size(155, 44);
+            StylePrimaryButton(btnLogin);
+            btnLogin.Click += BtnLogin_Click;
+
+            // btnSignUp
             btnSignUp.Text = "Sign Up";
-            btnSignUp.Location = new Point(55, 300);
+            btnSignUp.Location = new Point(220, 255);
             btnSignUp.Size = new Size(155, 44);
             StyleSuccessButton(btnSignUp);
             btnSignUp.Click += BtnSignUp_Click;
 
-            btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(220, 300);
-            btnCancel.Size = new Size(155, 44);
-            StyleDangerButton(btnCancel);
-            btnCancel.Click += BtnCancel_Click;
-
             Controls.AddRange(new Control[]
             {
-                lblTitle, lblName, txtName, lblMobile, txtMobileNumber,
-                lblPassword, txtPassword, btnSignUp, btnCancel
+                lblTitle, lblMobile, txtMobileNumber, lblPassword, txtPassword, btnLogin, btnSignUp
             });
             ResumeLayout(false);
             PerformLayout();
+        }
+
+        private static void StylePrimaryButton(Button button)
+        {
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+            button.BackColor = Color.FromArgb(37, 99, 235);
+            button.ForeColor = Color.White;
+            button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            button.Cursor = Cursors.Hand;
         }
 
         private static void StyleSuccessButton(Button button)
@@ -98,16 +105,6 @@ namespace FinanceTracker.Forms
             button.FlatStyle = FlatStyle.Flat;
             button.FlatAppearance.BorderSize = 0;
             button.BackColor = Color.FromArgb(5, 150, 105);
-            button.ForeColor = Color.White;
-            button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            button.Cursor = Cursors.Hand;
-        }
-
-        private static void StyleDangerButton(Button button)
-        {
-            button.FlatStyle = FlatStyle.Flat;
-            button.FlatAppearance.BorderSize = 0;
-            button.BackColor = Color.FromArgb(220, 38, 38);
             button.ForeColor = Color.White;
             button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             button.Cursor = Cursors.Hand;
