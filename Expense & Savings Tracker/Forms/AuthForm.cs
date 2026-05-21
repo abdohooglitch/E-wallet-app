@@ -59,5 +59,10 @@ namespace ExpenseSavingsTracker.Forms
             using var signup = new SignupForm();
             signup.ShowDialog();
         }
+
+        private void AuthForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -28,64 +28,93 @@ namespace ExpenseSavingsTracker.Forms
             btnLogin = new Button();
             btnSignUp = new Button();
             SuspendLayout();
-
-            // Form
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(480, 420);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Expense & Savings Tracker - Login";
-            BackColor = Color.FromArgb(241, 245, 249);
-            Font = new Font("Segoe UI", 9.75F);
-
+            // 
             // lblTitle
-            lblTitle.Text = "Expense & Savings Tracker";
-            lblTitle.Location = new Point(50, 35);
+            // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(15, 23, 42);
-
+            lblTitle.Location = new Point(50, 35);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(415, 46);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Expense & Savings Tracker";
+            // 
             // lblMobile
-            lblMobile.Text = "Mobile Number:";
-            lblMobile.Location = new Point(55, 105);
+            // 
             lblMobile.AutoSize = true;
             lblMobile.ForeColor = Color.FromArgb(51, 65, 85);
-
-            txtMobileNumber.Location = new Point(55, 128);
-            txtMobileNumber.Size = new Size(360, 28);
-            txtMobileNumber.BorderStyle = BorderStyle.FixedSingle;
-
+            lblMobile.Location = new Point(55, 105);
+            lblMobile.Name = "lblMobile";
+            lblMobile.Size = new Size(155, 28);
+            lblMobile.TabIndex = 1;
+            lblMobile.Text = "Mobile Number:";
+            // 
             // lblPassword
-            lblPassword.Text = "Password:";
-            lblPassword.Location = new Point(55, 170);
+            // 
             lblPassword.AutoSize = true;
             lblPassword.ForeColor = Color.FromArgb(51, 65, 85);
-
-            txtPassword.Location = new Point(55, 193);
-            txtPassword.Size = new Size(360, 28);
-            txtPassword.UseSystemPasswordChar = true;
+            lblPassword.Location = new Point(55, 170);
+            lblPassword.Name = "lblPassword";
+            lblPassword.Size = new Size(97, 28);
+            lblPassword.TabIndex = 3;
+            lblPassword.Text = "Password:";
+            // 
+            // txtMobileNumber
+            // 
+            txtMobileNumber.BorderStyle = BorderStyle.FixedSingle;
+            txtMobileNumber.Location = new Point(55, 128);
+            txtMobileNumber.Name = "txtMobileNumber";
+            txtMobileNumber.Size = new Size(360, 33);
+            txtMobileNumber.TabIndex = 2;
+            // 
+            // txtPassword
+            // 
             txtPassword.BorderStyle = BorderStyle.FixedSingle;
-
+            txtPassword.Location = new Point(55, 193);
+            txtPassword.Name = "txtPassword";
+            txtPassword.Size = new Size(360, 33);
+            txtPassword.TabIndex = 4;
+            txtPassword.UseSystemPasswordChar = true;
+            // 
             // btnLogin
-            btnLogin.Text = "Login";
+            // 
             btnLogin.Location = new Point(55, 265);
+            btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(175, 44);
-            StylePrimaryButton(btnLogin);
+            btnLogin.TabIndex = 5;
+            btnLogin.Text = "Login";
             btnLogin.Click += BtnLogin_Click;
-
+            // 
             // btnSignUp
-            btnSignUp.Text = "Sign Up";
+            // 
             btnSignUp.Location = new Point(240, 265);
+            btnSignUp.Name = "btnSignUp";
             btnSignUp.Size = new Size(175, 44);
-            StyleSuccessButton(btnSignUp);
+            btnSignUp.TabIndex = 6;
+            btnSignUp.Text = "Sign Up";
             btnSignUp.Click += BtnSignUp_Click;
-
-            Controls.AddRange(new Control[]
-            {
-                lblTitle, lblMobile, txtMobileNumber, lblPassword, txtPassword, btnLogin, btnSignUp
-            });
+            // 
+            // AuthForm
+            // 
+            AutoScaleDimensions = new SizeF(11F, 28F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(241, 245, 249);
+            ClientSize = new Size(480, 420);
+            Controls.Add(lblTitle);
+            Controls.Add(lblMobile);
+            Controls.Add(txtMobileNumber);
+            Controls.Add(lblPassword);
+            Controls.Add(txtPassword);
+            Controls.Add(btnLogin);
+            Controls.Add(btnSignUp);
+            Font = new Font("Segoe UI", 9.75F);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            Name = "AuthForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Expense & Savings Tracker - Login";
+            Load += AuthForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }
