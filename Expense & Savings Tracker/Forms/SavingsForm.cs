@@ -3,9 +3,14 @@ using ExpenseSavingsTracker.Models;
 
 namespace ExpenseSavingsTracker.Forms
 {
+    /// <summary>
+    /// Manage savings goals: create goals, deposit funds, and withdraw funds.
+    /// </summary>
     public partial class SavingsForm : Form
     {
         private readonly int _userId;
+
+        /// <summary>Cached list used to resolve selected row to a SavingGoal object.</summary>
         private List<SavingGoal> _goals = new();
 
         public SavingsForm(int userId)
@@ -15,6 +20,7 @@ namespace ExpenseSavingsTracker.Forms
             LoadGoals();
         }
 
+        /// <summary>Refreshes the goals grid with formatted amounts and progress percentage.</summary>
         private void LoadGoals()
         {
             _goals = DatabaseHelper.GetSavingGoals(_userId);
@@ -27,10 +33,14 @@ namespace ExpenseSavingsTracker.Forms
                 Progress = $"{g.ProgressPercent:0}%"
             }).ToList();
 
+            // Hide internal Id column; still used when row is selected
             if (dgvGoals.Columns.Contains("Id"))
                 dgvGoals.Columns["Id"]!.Visible = false;
         }
 
+        /// <summary>
+        /// Returns the goal matching the selected grid row, or shows a message if none selected.
+        /// </summary>
         private SavingGoal? GetSelectedGoal()
         {
             if (dgvGoals.SelectedRows.Count == 0)
@@ -44,6 +54,7 @@ namespace ExpenseSavingsTracker.Forms
             return _goals.FirstOrDefault(g => g.Id == goalId);
         }
 
+        /// <summary>Creates a new savings goal with the entered title and target amount.</summary>
         private void BtnCreateGoal_Click(object? sender, EventArgs e)
         {
             string title = txtGoalTitle.Text.Trim();
@@ -68,6 +79,7 @@ namespace ExpenseSavingsTracker.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        /// <summary>Adds money to the selected goal (capped at target in DatabaseHelper).</summary>
         private void BtnDeposit_Click(object? sender, EventArgs e)
         {
             var goal = GetSelectedGoal();
@@ -100,6 +112,7 @@ namespace ExpenseSavingsTracker.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        /// <summary>Removes money from the selected goal if balance is sufficient.</summary>
         private void BtnWithdraw_Click(object? sender, EventArgs e)
         {
             var goal = GetSelectedGoal();
@@ -125,6 +138,7 @@ namespace ExpenseSavingsTracker.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        /// <summary>Closes the form and returns to the dashboard.</summary>
         private void BtnBack_Click(object? sender, EventArgs e) => Close();
     }
 }

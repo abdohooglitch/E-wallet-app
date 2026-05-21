@@ -6,11 +6,16 @@ using ExpenseSavingsTracker.Models;
 
 namespace ExpenseSavingsTracker.Database
 {
+    /// <summary>
+    /// Central data-access layer: SQLite connection, schema setup, and CRUD for users, expenses, and savings.
+    /// </summary>
     public static class DatabaseHelper
     {
+        // Database file stored next to the executable
         private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "finance.db");
         private static readonly string ConnectionString = $"Data Source={DbPath}";
 
+        /// <summary>Predefined expense categories shown in the Add Expense dropdown.</summary>
         public static readonly string[] ExpenseCategories =
         {
             "Food & Dining",
@@ -23,11 +28,15 @@ namespace ExpenseSavingsTracker.Database
             "Other"
         };
 
+        /// <summary>
+        /// Creates Users, Expenses, and SavingGoals tables if they do not exist, then runs legacy migrations.
+        /// </summary>
         public static void InitializeDatabase()
         {
             using var connection = new SqliteConnection(ConnectionString);
             connection.Open();
 
+            // User accounts with mobile login and optional monthly budget
             ExecuteNonQuery(connection, @"
                 CREATE TABLE IF NOT EXISTS Users (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,6 +46,7 @@ namespace ExpenseSavingsTracker.Database
                     MonthlyBudget DECIMAL NOT NULL DEFAULT 0
                 );");
 
+            // Individual expense records linked to a user
             ExecuteNonQuery(connection, @"
                 CREATE TABLE IF NOT EXISTS Expenses (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,6 +58,7 @@ namespace ExpenseSavingsTracker.Database
                     FOREIGN KEY(UserId) REFERENCES Users(Id)
                 );");
 
+            // Savings goals with target and current saved amounts
             ExecuteNonQuery(connection, @"
                 CREATE TABLE IF NOT EXISTS SavingGoals (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,6 +73,9 @@ namespace ExpenseSavingsTracker.Database
             MigrateLegacyUsersTable(connection);
         }
 
+        /// <summary>
+        /// Adds missing columns to older database files without failing if columns already exist.
+        /// </summary>
         private static void MigrateLegacyUsersTable(SqliteConnection connection)
         {
             try
@@ -77,6 +91,7 @@ namespace ExpenseSavingsTracker.Database
             catch (SqliteException) { }
         }
 
+        /// <summary>Runs a SQL command that does not return rows (CREATE, INSERT, UPDATE, etc.).</summary>
         private static void ExecuteNonQuery(SqliteConnection connection, string sql)
         {
             using var cmd = connection.CreateCommand();
@@ -84,6 +99,9 @@ namespace ExpenseSavingsTracker.Database
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Inserts a new user. Returns false if mobile number is already registered (unique constraint).
+        /// </summary>
         public static bool RegisterUser(string name, string mobileNumber, string password)
         {
             try
@@ -104,6 +122,9 @@ namespace ExpenseSavingsTracker.Database
             }
         }
 
+        /// <summary>
+        /// Validates credentials and returns the matching user, or null if login fails.
+        /// </summary>
         public static User? Login(string mobileNumber, string password)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -117,6 +138,7 @@ namespace ExpenseSavingsTracker.Database
             return reader.Read() ? MapUser(reader) : null;
         }
 
+        /// <summary>Looks up a user by mobile number only (used before login to check registration).</summary>
         public static User? GetUserByMobile(string mobileNumber)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -129,6 +151,7 @@ namespace ExpenseSavingsTracker.Database
             return reader.Read() ? MapUser(reader) : null;
         }
 
+        /// <summary>Loads a single user record by primary key.</summary>
         public static User? GetUserById(int id)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -141,6 +164,7 @@ namespace ExpenseSavingsTracker.Database
             return reader.Read() ? MapUser(reader) : null;
         }
 
+        /// <summary>Updates the user's monthly spending budget on the dashboard.</summary>
         public static void UpdateMonthlyBudget(int userId, decimal budget)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -152,6 +176,7 @@ namespace ExpenseSavingsTracker.Database
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>Inserts a new expense row for the given user.</summary>
         public static void AddExpense(int userId, string category, decimal amount, DateTime date, string note)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -167,6 +192,9 @@ namespace ExpenseSavingsTracker.Database
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Returns expenses for a user, optionally filtered by year and month (newest first).
+        /// </summary>
         public static List<Expense> GetExpenses(int userId, int? year = null, int? month = null)
         {
             var list = new List<Expense>();
@@ -175,6 +203,7 @@ namespace ExpenseSavingsTracker.Database
             using var cmd = connection.CreateCommand();
 
             var sql = "SELECT Id, UserId, Category, Amount, ExpenseDate, Note FROM Expenses WHERE UserId = @userId";
+            // Optional filter for expense history and reports
             if (year.HasValue && month.HasValue)
             {
                 sql += " AND strftime('%Y', ExpenseDate) = @year AND strftime('%m', ExpenseDate) = @month";
@@ -201,6 +230,7 @@ namespace ExpenseSavingsTracker.Database
             return list;
         }
 
+        /// <summary>Sum of all expense amounts for the given user in a specific month.</summary>
         public static decimal GetMonthlyExpenses(int userId, int year, int month)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -216,6 +246,9 @@ namespace ExpenseSavingsTracker.Database
             return Convert.ToDecimal(cmd.ExecuteScalar());
         }
 
+        /// <summary>
+        /// Groups expenses by category for a month and calculates each category's share of total spending.
+        /// </summary>
         public static List<CategoryReport> GetExpensesByCategory(int userId, int year, int month)
         {
             var list = new List<CategoryReport>();
@@ -240,6 +273,7 @@ namespace ExpenseSavingsTracker.Database
                 list.Add(new CategoryReport { Category = reader.GetString(0), Total = total });
             }
 
+            // Compute percentage of monthly total for each category
             foreach (var item in list)
             {
                 item.Percentage = grandTotal <= 0 ? 0 : Math.Round((item.Total / grandTotal) * 100, 1);
@@ -247,6 +281,7 @@ namespace ExpenseSavingsTracker.Database
             return list;
         }
 
+        /// <summary>Creates a new savings goal with zero saved amount. Returns false if input is invalid.</summary>
         public static bool CreateSavingGoal(int userId, string title, decimal targetAmount)
         {
             if (string.IsNullOrWhiteSpace(title) || targetAmount <= 0) return false;
@@ -264,6 +299,7 @@ namespace ExpenseSavingsTracker.Database
             return true;
         }
 
+        /// <summary>Returns all savings goals for a user, newest first.</summary>
         public static List<SavingGoal> GetSavingGoals(int userId)
         {
             var list = new List<SavingGoal>();
@@ -290,6 +326,7 @@ namespace ExpenseSavingsTracker.Database
             return list;
         }
 
+        /// <summary>Loads one savings goal by its Id.</summary>
         public static SavingGoal? GetSavingGoalById(int goalId)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -313,6 +350,9 @@ namespace ExpenseSavingsTracker.Database
             };
         }
 
+        /// <summary>
+        /// Adds money to a goal; saved amount is capped at the target so the goal cannot exceed 100%.
+        /// </summary>
         public static bool DepositToGoal(int goalId, decimal amount)
         {
             if (amount <= 0) return false;
@@ -333,6 +373,9 @@ namespace ExpenseSavingsTracker.Database
             return true;
         }
 
+        /// <summary>
+        /// Removes money from a goal only if the saved balance is sufficient.
+        /// </summary>
         public static bool WithdrawFromGoal(int goalId, decimal amount)
         {
             if (amount <= 0) return false;
@@ -349,6 +392,7 @@ namespace ExpenseSavingsTracker.Database
             return true;
         }
 
+        /// <summary>Sum of SavedAmount across all goals for the user (dashboard total savings).</summary>
         public static decimal GetTotalSavings(int userId)
         {
             using var connection = new SqliteConnection(ConnectionString);
@@ -359,6 +403,9 @@ namespace ExpenseSavingsTracker.Database
             return Convert.ToDecimal(cmd.ExecuteScalar());
         }
 
+        /// <summary>
+        /// Builds dashboard figures: name, budget, current month expenses, and total savings.
+        /// </summary>
         public static DashboardSummary GetDashboardSummary(int userId)
         {
             var user = GetUserById(userId);
@@ -373,6 +420,7 @@ namespace ExpenseSavingsTracker.Database
             };
         }
 
+        /// <summary>Maps a SQLite data reader row to a User model instance.</summary>
         private static User MapUser(SqliteDataReader reader)
         {
             return new User

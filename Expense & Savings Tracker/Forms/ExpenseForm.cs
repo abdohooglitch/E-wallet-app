@@ -2,6 +2,9 @@ using ExpenseSavingsTracker.Database;
 
 namespace ExpenseSavingsTracker.Forms
 {
+    /// <summary>
+    /// Form to record a new expense: category, amount, date, and optional note.
+    /// </summary>
     public partial class ExpenseForm : Form
     {
         private readonly int _userId;
@@ -10,12 +13,16 @@ namespace ExpenseSavingsTracker.Forms
         {
             _userId = userId;
             InitializeComponent();
+            // Populate category dropdown from shared list in DatabaseHelper
             cmbCategory.Items.AddRange(DatabaseHelper.ExpenseCategories);
             if (cmbCategory.Items.Count > 0)
                 cmbCategory.SelectedIndex = 0;
             dtpDate.Value = DateTime.Today;
         }
 
+        /// <summary>
+        /// Validates category and amount, then saves the expense and closes the form.
+        /// </summary>
         private void BtnSave_Click(object? sender, EventArgs e)
         {
             if (cmbCategory.SelectedItem == null)
@@ -44,6 +51,7 @@ namespace ExpenseSavingsTracker.Forms
             Close();
         }
 
+        /// <summary>Returns to the dashboard without saving.</summary>
         private void BtnBack_Click(object? sender, EventArgs e) => Close();
     }
 }

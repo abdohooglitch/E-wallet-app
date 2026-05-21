@@ -2,6 +2,9 @@ using ExpenseSavingsTracker.Database;
 
 namespace ExpenseSavingsTracker.Forms
 {
+    /// <summary>
+    /// Registration screen for new users (name, mobile number, password).
+    /// </summary>
     public partial class SignupForm : Form
     {
         public SignupForm()
@@ -9,6 +12,9 @@ namespace ExpenseSavingsTracker.Forms
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Validates fields and saves a new user to the database.
+        /// </summary>
         private void BtnSignUp_Click(object? sender, EventArgs e)
         {
             string name = txtName.Text.Trim();
@@ -31,11 +37,13 @@ namespace ExpenseSavingsTracker.Forms
             }
             else
             {
+                // Duplicate mobile number triggers unique constraint failure
                 MessageBox.Show("Sign up failed. Mobile number may already be registered.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>Closes the form without creating an account.</summary>
         private void BtnCancel_Click(object? sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;

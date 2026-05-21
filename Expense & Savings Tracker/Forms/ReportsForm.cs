@@ -2,6 +2,9 @@ using ExpenseSavingsTracker.Database;
 
 namespace ExpenseSavingsTracker.Forms
 {
+    /// <summary>
+    /// Category breakdown report: spending per category for a selected month and year.
+    /// </summary>
     public partial class ReportsForm : Form
     {
         private readonly int _userId;
@@ -14,6 +17,9 @@ namespace ExpenseSavingsTracker.Forms
             LoadReport();
         }
 
+        /// <summary>
+        /// Fills month and year dropdowns (current month selected; last 3 years available).
+        /// </summary>
         private void InitPeriodSelectors()
         {
             cmbMonth.Items.AddRange(new object[]
@@ -29,6 +35,9 @@ namespace ExpenseSavingsTracker.Forms
             cmbYear.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// Loads grouped category totals and percentage share for the chosen period.
+        /// </summary>
         private void LoadReport()
         {
             int month = cmbMonth.SelectedIndex + 1;
@@ -46,8 +55,10 @@ namespace ExpenseSavingsTracker.Forms
             lblGrandTotal.Text = $"Grand Total: Rs {total:N0}";
         }
 
+        /// <summary>Reloads report when user changes month or year and clicks Load.</summary>
         private void BtnLoad_Click(object? sender, EventArgs e) => LoadReport();
 
+        /// <summary>Closes the form and returns to the dashboard.</summary>
         private void BtnBack_Click(object? sender, EventArgs e) => Close();
     }
 }

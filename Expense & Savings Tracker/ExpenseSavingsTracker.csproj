@@ -11,10 +11,57 @@
     <Product>Expense &amp; Savings Tracker</Product>
     <AssemblyTitle>Expense &amp; Savings Tracker</AssemblyTitle>
     <Company>Expense &amp; Savings Tracker</Company>
+    <StartupObject>ExpenseSavingsTracker.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.7" />
+  </ItemGroup>
+
+  <!-- Windows Forms designer: link each form to its Designer file -->
+  <ItemGroup>
+    <Compile Update="Forms\AuthForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\AuthForm.Designer.cs">
+      <DependentUpon>AuthForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\SignupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\SignupForm.Designer.cs">
+      <DependentUpon>SignupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DashboardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DashboardForm.Designer.cs">
+      <DependentUpon>DashboardForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\ExpenseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ExpenseForm.Designer.cs">
+      <DependentUpon>ExpenseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\ExpenseHistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ExpenseHistoryForm.Designer.cs">
+      <DependentUpon>ExpenseHistoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\SavingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\SavingsForm.Designer.cs">
+      <DependentUpon>SavingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\ReportsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ReportsForm.Designer.cs">
+      <DependentUpon>ReportsForm.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
